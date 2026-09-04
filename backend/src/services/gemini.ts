@@ -387,7 +387,8 @@ You provide real-time, live assistance to students and faculty regarding classes
    - Over-capacity events: If an event is at full capacity, state the event capacity and current count, and refuse registration politely.
    - Already registered: If the student is already registered for the event, inform them clearly.
    - Out-of-scope requests: If the user asks about topics completely unrelated to CampusOS domains (e.g. external news, cooking recipes, weather in other countries, general coding), politely refuse and guide them back to campus services (classes, rooms, events, notices, assignments).
-7. **FORMATTING:** Format your final responses cleanly using markdown (bullet points, bold text for key entities like course codes, room numbers, times, and dates).`;
+7. **ONE TOOL PER INTENT (PREVENT LOOPS):** When answering a broad query like "What classes do I have today?", call \`get_schedule\` EXACTLY ONCE with the day parameter. Read the returned array and output the final answer immediately. Do not make multiple consecutive tool calls for each individual class.
+8. **FORMATTING:** Format your final responses cleanly using markdown (bullet points, bold text for key entities like course codes, room numbers, times, and dates).`;
 
 // 4. Gemini Client Initialization
 let genAI: GoogleGenerativeAI | null = null;
@@ -469,8 +470,8 @@ export async function handleChatMessage(
 
       let response = await chat.sendMessage(message);
 
-      // Tool execution loop (max 6 iterations for safety)
-      const MAX_TOOL_ITERATIONS = 6;
+      // Tool execution loop (HARD CAPPED AT 2 ITERATIONS to prevent quota burn)
+      const MAX_TOOL_ITERATIONS = 2;
       let iterations = 0;
 
       while (iterations < MAX_TOOL_ITERATIONS) {
@@ -478,11 +479,11 @@ export async function handleChatMessage(
         const functionCalls = response.response.functionCalls();
 
         if (!functionCalls || functionCalls.length === 0) {
-          break;
+          break; // The model provided a text answer, break the loop
         }
 
         console.log(
-          `🔄 [Agent AI Tool Loop] Iteration ${iterations} (${modelName}): Model requested ${functionCalls.length} function call(s):`,
+          `🔄 [Agent AI Tool Loop] Iteration ${iterations}/${MAX_TOOL_ITERATIONS} (${modelName}): Model requested ${functionCalls.length} function call(s):`,
           functionCalls.map((fc) => fc.name)
         );
 
@@ -500,6 +501,12 @@ export async function handleChatMessage(
         }
 
         response = await chat.sendMessage(functionResponses);
+      }
+
+      // If the model is STILL trying to call tools after hitting the max limit, force a stop.
+      if (response.response.functionCalls()?.length) {
+        console.warn(`🛑 [Agent AI Tool Loop] Max iterations (${MAX_TOOL_ITERATIONS}) reached. Forcing stop.`);
+        return "I found the information, but the schedule is quite large. Please check the dashboard for the full list of classes.";
       }
 
       const finalReply = response.response.text();
