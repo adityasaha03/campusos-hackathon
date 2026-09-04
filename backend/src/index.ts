@@ -14,11 +14,29 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'https://campusos-hackathon-8rtyi500h-misfortune500.vercel.app';
 
 // Middleware
+const allowedOrigins = [
+  FRONTEND_ORIGIN,
+  'https://campusos-hackathon-8rtyi500h-misfortune500.vercel.app',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+];
+
 app.use(cors({
-  origin: [FRONTEND_ORIGIN, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app') ||
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1')
+    ) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   credentials: true,
 }));
 app.use(express.json());
@@ -42,7 +60,7 @@ app.use(errorHandler);
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`🚀 CampusOS Backend API server running on port ${PORT}`);
-    console.log(`📡 Base API URL: http://localhost:${PORT}/api`);
+    console.log(`📡 Base API URL: ${process.env.RENDER_EXTERNAL_URL || 'https://campusos-hackathon-1.onrender.com'}/api (Local: http://localhost:${PORT}/api)`);
   });
 }
 

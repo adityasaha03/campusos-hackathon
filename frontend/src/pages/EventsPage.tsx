@@ -275,7 +275,7 @@ export const EventsPage: React.FC = () => {
           <AlertCircle size={20} />
           <div>
             <strong>Unable to load events.</strong> Make sure the backend server is running at{' '}
-            <code>http://localhost:4000</code>.
+            <code>https://campusos-hackathon-1.onrender.com</code>.
             <div className="error-hint">{getErrorMessage(queryError)}</div>
           </div>
         </div>

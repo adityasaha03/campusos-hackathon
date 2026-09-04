@@ -117,7 +117,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
         <div className="navbar-right">
           <div className="api-status-pill" title={`API target: ${API_BASE_URL}`}>
             <Activity size={12} className="api-pulse-dot" />
-            <span className="api-status-text">API :4000</span>
+            <span className="api-status-text">{API_BASE_URL.includes('onrender.com') ? 'Render API' : 'API Online'}</span>
           </div>
           <div className="user-profile-badge">
             <div className="user-avatar">
