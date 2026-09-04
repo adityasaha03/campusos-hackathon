@@ -166,9 +166,7 @@ export async function getAvailableRooms(params: AvailableRoomsQuery) {
   const rooms = await prisma.room.findMany({
     where,
     include: {
-      bookings: {
-        where: { date },
-      },
+      bookings: true,
     },
     orderBy: {
       room_number: 'asc',
@@ -176,9 +174,11 @@ export async function getAvailableRooms(params: AvailableRoomsQuery) {
   });
 
   return rooms.filter((room) => {
-    const hasConflict = room.bookings.some((booking) =>
-      isTimeOverlap(start_time, end_time, booking.start_time, booking.end_time)
-    );
+    const hasConflict = room.bookings
+      .filter((booking) => booking.date === date)
+      .some((booking) =>
+        isTimeOverlap(start_time, end_time, booking.start_time, booking.end_time)
+      );
     return !hasConflict;
   });
 }

@@ -48,7 +48,7 @@ export async function deleteAssignment(req: Request, res: Response, next: NextFu
   try {
     const { id } = req.params;
     await assignmentService.deleteAssignment(id);
-    res.status(204).send();
+    res.json({ success: true, message: 'Assignment deleted successfully' });
   } catch (err) {
     next(err);
   }

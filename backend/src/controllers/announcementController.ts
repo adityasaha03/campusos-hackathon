@@ -47,7 +47,7 @@ export async function deleteAnnouncement(req: Request, res: Response, next: Next
   try {
     const { id } = req.params;
     await announcementService.deleteAnnouncement(id);
-    res.status(204).send();
+    res.json({ success: true, message: 'Announcement deleted successfully' });
   } catch (err) {
     next(err);
   }
