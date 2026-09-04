@@ -2,6 +2,8 @@
 
 > **AI Build Hackathon Submission**  
 > An intelligent university platform combining a real-time campus management dashboard and an autonomous Google Gemini AI agent connected live to Neon PostgreSQL.
+>
+> 🌐 **Live Application:** [https://campusos-hackathon.vercel.app/](https://campusos-hackathon.vercel.app/)
 
 ---
 
@@ -284,4 +286,5 @@ To prove that the AI agent reflects live database state with zero caching delay:
 - [x] **Instant UI Updates:** TanStack Query invalidation on every mutation
 - [x] **Real Tool Calling:** Native Gemini function calling, no mocked prose
 - [x] **Live Data Guarantee:** Zero-cache reads from DB on every agent turn
+- [x] **Live Cloud Deployment:** Accessible at [https://campusos-hackathon.vercel.app/](https://campusos-hackathon.vercel.app/)
 - [x] **Zero Committed Secrets:** Environment variables securely managed via `.env.example`
