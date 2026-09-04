@@ -2,7 +2,7 @@
 
 ## Status Overview
 - **Phase 0 (Repo Scaffolding):** ✅ Completed
-- **Phase 1 (Database Layer / Prisma):** ⏳ Schema, Seed script, and Prisma client models are implemented; waiting for Neon `DATABASE_URL` to run `db push` / `seed`.
+- **Phase 1 (Database Layer / Prisma):** ✅ Completed (Neon PostgreSQL schema synced via Prisma, seed data populated and verified).
 - **Phase 2 (Backend CRUD API):** ✅ Completed (All services, controllers, routes, validation, and Express app implemented and type-checked).
 - **Phase 3 (Frontend Dashboard):** ⏳ Pending
 - **Phase 4 (AI Agent / Gemini Integration):** ⏳ Pending
@@ -75,7 +75,6 @@
 ---
 
 ## Next Steps
-1. **Provide `DATABASE_URL`:** Configure Neon PostgreSQL connection string in `.env`.
-2. **Run Migrations & Seed:** Execute `npx prisma db push` and `npm run seed`.
-3. **Smoke test live endpoints:** Confirm database mutations and query responses against Neon.
-4. **Proceed to Phase 3 (Frontend Dashboard) & Phase 4 (Gemini AI Agent).**
+1. **Proceed to Phase 3 (Frontend Dashboard):** Bootstrap Vite React dashboard consuming backend REST API with TanStack Query.
+2. **Proceed to Phase 4 (Gemini AI Agent):** Implement `backend/src/services/gemini.ts` function-calling tools using backend services.
+3. **Phase 5 & 6:** Verify live data-sync and sample query execution.
