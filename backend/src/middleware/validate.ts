@@ -9,7 +9,10 @@ export function validateBody(schema: ZodSchema) {
       next();
     } catch (err) {
       if (err instanceof ZodError) {
-        return next(new HttpError(400, 'Validation failed', err.errors));
+        const issues = err.errors
+          .map((e) => (e.path.length > 0 ? `${e.path.join('.')}: ${e.message}` : e.message))
+          .join('; ');
+        return next(new HttpError(400, `Validation failed: ${issues}`, err.errors));
       }
       next(err);
     }

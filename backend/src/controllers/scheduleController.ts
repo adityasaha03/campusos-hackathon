@@ -49,7 +49,7 @@ export async function deleteSchedule(req: Request, res: Response, next: NextFunc
   try {
     const { id } = req.params;
     await scheduleService.deleteSchedule(id);
-    res.status(204).send();
+    res.json({ success: true, message: 'Schedule deleted successfully' });
   } catch (err) {
     next(err);
   }

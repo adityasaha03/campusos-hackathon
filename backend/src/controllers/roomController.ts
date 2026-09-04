@@ -85,7 +85,7 @@ export async function deleteRoom(req: Request, res: Response, next: NextFunction
   try {
     const { id } = req.params;
     await roomService.deleteRoom(id);
-    res.status(204).send();
+    res.json({ success: true, message: 'Room deleted successfully' });
   } catch (err) {
     next(err);
   }
@@ -95,7 +95,11 @@ export async function bookRoom(req: Request, res: Response, next: NextFunction) 
   try {
     const { id } = req.params;
     const booking = await roomService.bookRoom(id, req.body);
-    res.status(201).json(booking);
+    res.status(201).json({
+      success: true,
+      booking,
+      message: 'Room booked successfully',
+    });
   } catch (err) {
     next(err);
   }
@@ -105,7 +109,7 @@ export async function cancelRoomBooking(req: Request, res: Response, next: NextF
   try {
     const { id, booking_id } = req.params;
     await roomService.cancelRoomBooking(booking_id, id);
-    res.status(204).send();
+    res.json({ success: true, message: 'Booking cancelled successfully' });
   } catch (err) {
     next(err);
   }

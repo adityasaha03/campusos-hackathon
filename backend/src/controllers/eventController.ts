@@ -48,7 +48,7 @@ export async function deleteEvent(req: Request, res: Response, next: NextFunctio
   try {
     const { id } = req.params;
     await eventService.deleteEvent(id);
-    res.status(204).send();
+    res.json({ success: true, message: 'Event deleted successfully' });
   } catch (err) {
     next(err);
   }
@@ -59,7 +59,12 @@ export async function registerForEvent(req: Request, res: Response, next: NextFu
     const { id } = req.params;
     const { student_id, name } = req.body || {};
     const result = await eventService.registerForEvent(id, student_id, name);
-    res.status(201).json(result);
+    res.status(201).json({
+      success: true,
+      event: result.event,
+      registration: result.registration,
+      message: 'Registered for event successfully',
+    });
   } catch (err) {
     next(err);
   }
@@ -70,7 +75,12 @@ export async function cancelEventRegistration(req: Request, res: Response, next:
     const { id } = req.params;
     const { student_id } = req.body || {};
     const result = await eventService.cancelEventRegistration(id, student_id);
-    res.json(result);
+    res.json({
+      success: true,
+      event: result.event,
+      cancelled_registration: result.cancelled_registration,
+      message: 'Event registration cancelled successfully',
+    });
   } catch (err) {
     next(err);
   }

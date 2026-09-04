@@ -37,7 +37,7 @@ export const bookRoomSchema = z.object({
 export const createEventSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, 'name is required'),
-  description: z.string().min(1, 'description is required'),
+  description: z.string().default(''),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be YYYY-MM-DD'),
   start_time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'start_time must be HH:MM'),
   end_time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'end_time must be HH:MM'),
@@ -77,7 +77,7 @@ export const createAssignmentSchema = z.object({
   course: z.string().min(1, 'course is required'),
   course_title: z.string().min(1, 'course_title is required'),
   title: z.string().min(1, 'title is required'),
-  description: z.string().min(1, 'description is required'),
+  description: z.string().default(''),
   assigned_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'assigned_date must be YYYY-MM-DD'),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'deadline must be YYYY-MM-DD'),
   submission_platform: z.string().min(1, 'submission_platform is required'),
