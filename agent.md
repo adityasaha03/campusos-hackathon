@@ -5,7 +5,9 @@
 - **Phase 1 (Database Layer / Prisma):** ✅ Completed (Neon PostgreSQL schema synced via Prisma, seed script created & verified).
 - **Phase 2 (Backend CRUD API):** ✅ Completed (All services, controllers, routes, validation, and Express app implemented and aligned with frontend contracts).
 - **Phase 3 (Frontend Dashboard):** ✅ Completed (Vite + React 18 + TypeScript + TanStack Query dashboard with all 6 views and CRUD modals).
-- **Phase 4 (AI Agent / Gemini Integration):** ⏳ Pending
+- **Phase 4 (AI Agent / Gemini Integration):** ✅ Completed (Gemini function-calling wrapper with 10 tools, real DB service dispatch, model cascading).
+- **Phase 5 (Integration & Data-Sync Proof):** ✅ Completed (Verified live data update mid-evaluation with zero caching latency).
+- **Phase 6 (Sample Query Verification):** ✅ Completed (All simple lookups, multi-source reasoning, action mutations, and edge case refusals passing).
 
 ---
 
@@ -90,3 +92,34 @@
 | | `/assignments/:id` | `PUT` | `Partial<Assignment>` | `Assignment` |
 | | `/assignments/:id` | `DELETE` | — | `{ success: true, message: string }` |
 | **Agent Chat** | `/agent/chat` | `POST` | `{ message: string, history?: ChatTurn[] }` | `{ reply: string }` |
+
+---
+
+## 4. AI Agent Implementation (`backend/src/services/gemini.ts`)
+
+### Deliverables Completed
+1. **Tool / Function Registry (10 Tools)**:
+   - `get_schedule`: Timetable queries with `day`, `course`, and `instructor` filters.
+   - `get_assignments`: Filtered queries by `course`, `status`, and `deadline_before`.
+   - `get_announcements`: Notice queries with `priority` and `since` filters.
+   - `get_events`: Campus event search with `date` and `name_contains` substring.
+   - `get_rooms`: Room search by `type`, `min_capacity`, and `equipment` array.
+   - `check_room_availability`: Real-time interval overlap check for a specific room and date/time.
+   - `book_room`: Room reservation persisting to Neon DB with conflict detection.
+   - `cancel_room_booking`: Cancels room reservation by `booking_id`.
+   - `register_for_event`: Registers active student with duplicate and capacity validation.
+   - `cancel_event_registration`: Cancels active student event registration.
+2. **Architecture & Service Layering**:
+   - Zero duplicate data access logic: AI agent imports and calls `backend/src/services/` functions directly.
+   - Automatic model cascading: Defaults to `gemini-3.1-flash-lite-preview` with seamless fallback to `gemini-3-flash-preview` on rate-limit/overload.
+   - Tool execution loop: Automatically executes function calls and feeds back `functionResponse` turns iteratively up to 6 rounds.
+   - Explicit logging: Emits `[Agent AI Tool Invocation]` with tool names and arguments for complete auditability.
+3. **Behavioral Compliance**:
+   - **Entity Resolution**: Room numbers and event titles resolved via read tools before mutating.
+   - **Vague Action Refusal**: Never calls mutating tools with guessed parameters; prompts for clarification instead (e.g. "just book me any room tomorrow").
+   - **Out-of-Scope Handling**: Refuses questions outside campus life (e.g. world geography, recipes) politely and guides back to campus tools.
+   - **Multi-Source Reasoning**: Combines schedules with announcements for rescheduled classes, and schedules with events for schedule gap activities.
+4. **Live Data-Sync Proof (Phase 5 Passed)**:
+   - Modified announcement `ann-001` with a rescheduled room/time via `PUT /api/announcements/ann-001`.
+   - Queried the agent immediately: `"Where is my CSE 4113 class this Sunday?"`.
+   - Agent immediately reported the new room (`9B99`) and time (`5:00 PM`) with zero delay and no server restart.
